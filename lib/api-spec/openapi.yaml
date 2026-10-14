@@ -1,0 +1,492 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Land Record Intelligence System Phase 1 API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: account
+    description: Authenticated officer profile
+  - name: dashboard
+    description: Case and document overview
+  - name: cases
+    description: Land acquisition cases
+  - name: documents
+    description: Case source documents
+  - name: storage
+    description: Private object storage upload helpers
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /me:
+    get:
+      operationId: getMe
+      tags: [account]
+      summary: Get the current officer profile
+      responses:
+        "200":
+          description: Current profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard KPI values
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Get recent case activity
+      responses:
+        "200":
+          description: Recent activity entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Activity"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /cases:
+    get:
+      operationId: listCases
+      tags: [cases]
+      summary: List cases
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Case"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    post:
+      operationId: createCase
+      tags: [cases]
+      summary: Create a draft case
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CaseInput"
+      responses:
+        "201":
+          description: Created case
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /cases/{caseId}:
+    get:
+      operationId: getCase
+      tags: [cases]
+      summary: Get one case
+      parameters:
+        - $ref: "#/components/parameters/CaseId"
+      responses:
+        "200":
+          description: Case
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Case"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /cases/{caseId}/documents:
+    get:
+      operationId: listCaseDocuments
+      tags: [documents]
+      summary: List documents for a case
+      parameters:
+        - $ref: "#/components/parameters/CaseId"
+      responses:
+        "200":
+          description: Case documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    post:
+      operationId: createCaseDocument
+      tags: [documents]
+      summary: Persist document metadata after upload
+      parameters:
+        - $ref: "#/components/parameters/CaseId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentInput"
+      responses:
+        "201":
+          description: Document metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /documents/{documentId}:
+    delete:
+      operationId: deleteDocument
+      tags: [documents]
+      summary: Delete a document and its private object
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /storage/uploads/request-url:
+    post:
+      operationId: requestUploadUrl
+      tags: [storage]
+      summary: Request a private direct-upload URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadRequest"
+      responses:
+        "200":
+          description: Signed upload URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrl"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+components:
+  parameters:
+    CaseId:
+      name: caseId
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Unauthorized request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    Profile:
+      type: object
+      required: [id, fullName, email, role, department, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [OFFICER, ADMIN, REVIEWER, SUPERVISOR]
+        department:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    Case:
+      type: object
+      required:
+        - id
+        - caseId
+        - projectName
+        - district
+        - village
+        - acquisitionReference
+        - description
+        - status
+        - createdBy
+        - documentCount
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        caseId:
+          type: string
+        projectName:
+          type: string
+        district:
+          type: string
+        village:
+          type: string
+        acquisitionReference:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [DRAFT, PROCESSING, REVIEW_REQUIRED, VERIFIED, INCONSISTENT]
+        createdBy:
+          type: string
+        documentCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CaseInput:
+      type: object
+      required: [projectName, district, village]
+      properties:
+        projectName:
+          type: string
+          minLength: 1
+        district:
+          type: string
+          minLength: 1
+        village:
+          type: string
+          minLength: 1
+        acquisitionReference:
+          type: string
+        description:
+          type: string
+    Document:
+      type: object
+      required:
+        - id
+        - caseId
+        - serialNumber
+        - filename
+        - documentType
+        - filePath
+        - mimeType
+        - fileSize
+        - uploadStatus
+        - processingStatus
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        caseId:
+          type: string
+        serialNumber:
+          type: integer
+        filename:
+          type: string
+        documentType:
+          type: string
+          enum:
+            - UNKNOWN
+            - SALE_DEED
+            - KHASRA_RECORD
+            - MUTATION_RECORD
+            - OWNERSHIP_CERTIFICATE
+            - REGISTRATION_RECORD
+        filePath:
+          type: string
+        mimeType:
+          type: string
+        fileSize:
+          type: integer
+        uploadStatus:
+          type: string
+          enum: [UPLOADED, FAILED]
+        processingStatus:
+          type: string
+          enum:
+            - NOT_STARTED
+            - QUEUED
+            - INGESTION
+            - UNDERSTANDING
+            - CLASSIFICATION
+            - EXTRACTION
+            - VALIDATION
+            - COMPLETED
+            - FAILED
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    DocumentInput:
+      type: object
+      required: [filename, filePath, mimeType, fileSize]
+      properties:
+        filename:
+          type: string
+          minLength: 1
+        filePath:
+          type: string
+          minLength: 1
+        mimeType:
+          type: string
+          enum: [application/pdf, image/jpeg, image/png]
+        fileSize:
+          type: integer
+          minimum: 1
+        documentType:
+          type: string
+          enum:
+            - UNKNOWN
+            - SALE_DEED
+            - KHASRA_RECORD
+            - MUTATION_RECORD
+            - OWNERSHIP_CERTIFICATE
+            - REGISTRATION_RECORD
+    DashboardSummary:
+      type: object
+      required:
+        - totalCases
+        - documentsUploaded
+        - documentsProcessed
+        - recordsVerified
+        - recordsRequiringReview
+        - conflictsDetected
+      properties:
+        totalCases:
+          type: integer
+        documentsUploaded:
+          type: integer
+        documentsProcessed:
+          type: integer
+        recordsVerified:
+          type: integer
+        recordsRequiringReview:
+          type: integer
+        conflictsDetected:
+          type: integer
+    Activity:
+      type: object
+      required: [id, kind, title, detail, timestamp]
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+          enum: [CASE_CREATED, DOCUMENT_UPLOADED]
+        title:
+          type: string
+        detail:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    UploadRequest:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        size:
+          type: integer
+          minimum: 1
+        contentType:
+          type: string
+          enum: [application/pdf, image/jpeg, image/png]
+    UploadUrl:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL:
+          type: string
+          format: uri
+        objectPath:
+          type: string

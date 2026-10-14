@@ -1,0 +1,715 @@
+# LAND RECORD INTELLIGENCE SYSTEM
+
+## REPLIT BUILD — PHASE 1 ONLY
+
+You are building a production-style hackathon MVP called:
+
+**LAND RECORD INTELLIGENCE SYSTEM**
+
+This is an AI-powered land-record document intelligence and verification application.
+
+IMPORTANT: **DO NOT BUILD THE ENTIRE PRODUCT IN THIS PROMPT.**
+
+This is **PHASE 1 ONLY**.
+
+Your goal is to create a clean, working foundation that later phases can extend without rewriting the architecture.
+
+---
+
+# 1. CORE PRODUCT IDEA
+
+The final application will eventually support this workflow:
+
+DOCUMENT UPLOAD
+→ AI DOCUMENT UNDERSTANDING
+→ STRUCTURED EXTRACTION
+→ FIELD VALIDATION
+→ CROSS-DOCUMENT RECONCILIATION
+→ EXISTING RECORD COMPARISON
+→ CONFLICT DETECTION
+→ INTEGRITY SCORE
+→ HUMAN OFFICER REVIEW
+→ FINAL VERIFIED RECORD
+→ AUDIT TRAIL
+
+For this phase, implement only the foundation.
+
+Do NOT implement AI processing yet.
+
+Do NOT implement OCR yet.
+
+Do NOT implement reconciliation yet.
+
+Do NOT implement the verification score yet.
+
+Do NOT implement the document scanner animation yet.
+
+---
+
+# 2. TECH STACK
+
+Use a simple architecture that is cheap to run and easy to extend on Replit.
+
+## Frontend
+
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+* shadcn/ui where useful
+* Lucide React icons
+* React Router
+* TanStack Query
+
+## Backend
+
+Use Node.js + TypeScript.
+
+Prefer:
+
+* Express
+* PostgreSQL
+* Prisma ORM
+
+Use REST APIs.
+
+Do NOT create microservices.
+
+Do NOT create a separate Python backend.
+
+Do NOT create FastAPI.
+
+Do NOT use Kubernetes.
+
+Do NOT create a separate AI server.
+
+The application should be a **single modular full-stack application**.
+
+---
+
+# 3. DATABASE
+
+Create a PostgreSQL database using Prisma.
+
+Create the initial schema for these entities:
+
+## profiles
+
+Fields:
+
+* id
+* full_name
+* email
+* role
+* department
+* created_at
+* updated_at
+
+Roles:
+
+* OFFICER
+* ADMIN
+* REVIEWER
+* SUPERVISOR
+
+Default new user role:
+
+OFFICER
+
+---
+
+## cases
+
+Fields:
+
+* id
+* case_id
+* project_name
+* district
+* village
+* acquisition_reference
+* description
+* status
+* created_by
+* created_at
+* updated_at
+
+Case status:
+
+* DRAFT
+* PROCESSING
+* REVIEW_REQUIRED
+* VERIFIED
+* INCONSISTENT
+
+Generate human-readable case IDs such as:
+
+LA-2026-00001
+
+---
+
+## documents
+
+Fields:
+
+* id
+* case_id
+* serial_number
+* filename
+* document_type
+* file_path
+* mime_type
+* file_size
+* upload_status
+* processing_status
+* created_at
+* updated_at
+
+Document types:
+
+* SALE_DEED
+* KHASRA_RECORD
+* MUTATION_RECORD
+* OWNERSHIP_CERTIFICATE
+* REGISTRATION_RECORD
+
+Processing status:
+
+* NOT_STARTED
+* QUEUED
+* INGESTION
+* UNDERSTANDING
+* CLASSIFICATION
+* EXTRACTION
+* VALIDATION
+* COMPLETED
+* FAILED
+
+Do not implement processing yet.
+
+---
+
+# 4. AUTHENTICATION
+
+Implement basic email/password authentication.
+
+Authenticated users should be able to access the application.
+
+Create authorization middleware on the backend.
+
+Never rely only on frontend role checks.
+
+The backend must verify the authenticated user.
+
+For the MVP, an OFFICER account is sufficient for testing.
+
+Do not spend excessive time building an advanced authentication system.
+
+---
+
+# 5. APPLICATION LAYOUT
+
+Create a professional institutional application.
+
+Use a persistent left sidebar.
+
+Sidebar:
+
+LAND RECORD
+INTELLIGENCE SYSTEM
+
+Navigation:
+
+* Home
+* Cases
+* Records
+* Audit Trail
+
+Optional:
+
+* Settings
+* Officer Profile
+
+Top bar:
+
+* Current page title
+* Current case when applicable
+* User profile
+* System status
+
+---
+
+# 6. DESIGN LANGUAGE
+
+The UI should look like a serious government/enterprise information system.
+
+Use:
+
+* light workspace
+* dark navy typography
+* restrained blue accents
+* green for successful states
+* amber for warnings
+* red only for conflicts/errors
+* thin borders
+* subtle shadows
+* compact cards
+* professional tables
+* restrained animations
+
+Avoid:
+
+* neon colors
+* gaming aesthetics
+* giant rounded cards
+* excessive gradients
+* excessive animations
+* cartoon illustrations
+* unnecessary decorative elements
+
+Prioritize information density and clarity.
+
+---
+
+# 7. HOME DASHBOARD
+
+Create the Home dashboard.
+
+Display KPI cards:
+
+* Total Cases
+* Documents Uploaded
+* Documents Processed
+* Records Verified
+* Records Requiring Review
+* Conflicts Detected
+
+For Phase 1, these values can be zero when there is no database data.
+
+IMPORTANT:
+
+Do not hard-code fake statistics.
+
+Dashboard values must come from the database.
+
+Create a Recent Cases table:
+
+Columns:
+
+* Case ID
+* Project
+* Village
+* Documents
+* Verification Status
+* Updated
+* Action
+
+Add:
+
+**New Case**
+
+button.
+
+Also show a small recent activity section.
+
+---
+
+# 8. CASES PAGE
+
+Create a Cases page.
+
+Show cases from PostgreSQL.
+
+Allow:
+
+* search
+* open case
+* create case
+
+Create Case form:
+
+* Project Name
+* District
+* Village
+* Acquisition Reference
+* Description
+
+Do NOT ask the user to manually enter:
+
+* Survey Number
+* Khasra Number
+* Owner
+
+Those values will later come from uploaded documents.
+
+On creation:
+
+Generate a case ID such as:
+
+LA-2026-00001
+
+Initial status:
+
+DRAFT
+
+Persist everything to PostgreSQL.
+
+---
+
+# 9. CASE WORKSPACE
+
+Create a Case Workspace page.
+
+Display:
+
+Case ID
+Project
+District
+Village
+Status
+
+Buttons:
+
+* Upload Documents
+* Process Documents
+* Verification
+* View Record
+
+For Phase 1:
+
+Only **Upload Documents** needs to work.
+
+The other buttons should exist but can display:
+
+"Available in the next processing phase."
+
+Do not implement fake functionality.
+
+---
+
+# 10. DOCUMENT UPLOAD
+
+Implement real document upload.
+
+Supported formats:
+
+* PDF
+* JPG
+* JPEG
+* PNG
+
+Allow multiple files.
+
+Assign serial numbers automatically according to upload order:
+
+01
+02
+03
+04
+05
+
+The serial number must be persisted in the database.
+
+Create the document table:
+
+| S.No. | Filename | Document Type | Upload Status | Processing Status | Actions |
+
+At upload time:
+
+Upload Status:
+
+UPLOADED
+
+Processing Status:
+
+NOT_STARTED
+
+Document Type:
+
+UNKNOWN
+
+unless the user explicitly selects one.
+
+---
+
+# 11. FILE STORAGE
+
+Do not store document binary data directly inside PostgreSQL.
+
+Use file storage supported by the Replit environment.
+
+Create an abstraction such as:
+
+StorageService
+
+with methods:
+
+* uploadFile()
+* getFile()
+* deleteFile()
+
+The application should be structured so storage can later be replaced by S3-compatible storage without changing business logic.
+
+Never expose private storage credentials to the frontend.
+
+---
+
+# 12. API STRUCTURE
+
+Create clean REST endpoints.
+
+At minimum:
+
+POST /api/auth/register
+
+POST /api/auth/login
+
+GET /api/me
+
+GET /api/cases
+
+POST /api/cases
+
+GET /api/cases/:caseId
+
+GET /api/cases/:caseId/documents
+
+POST /api/cases/:caseId/documents
+
+DELETE /api/documents/:documentId
+
+The API must validate request bodies.
+
+Use Zod or an equivalent validation library.
+
+---
+
+# 13. PROJECT STRUCTURE
+
+Keep the code modular.
+
+Suggested structure:
+
+client/
+src/
+components/
+pages/
+layouts/
+hooks/
+lib/
+api/
+
+server/
+src/
+routes/
+controllers/
+services/
+middleware/
+validators/
+utils/
+
+prisma/
+schema.prisma
+
+Do not create unnecessary folders.
+
+Keep the architecture simple.
+
+---
+
+# 14. IMPORTANT FUTURE EXTENSION POINTS
+
+The architecture must make it easy to add these later:
+
+AI document processing
+
+Gemini integration
+
+structured extraction
+
+field confidence
+
+field validation
+
+cross-document reconciliation
+
+legacy record comparison
+
+integrity scoring
+
+human verification
+
+audit logs
+
+ownership history
+
+realtime processing status
+
+Do not implement these yet.
+
+Simply make the architecture ready for them.
+
+---
+
+# 15. DEMO CASE
+
+Seed ONE demo case.
+
+Case:
+
+LA-2026-00027
+
+Project:
+
+Bhopal–Sehore Road Expansion
+
+District:
+
+Sehore
+
+Village:
+
+Barkheda
+
+Owner information should NOT be stored as a manually entered case field.
+
+It will later come from document extraction.
+
+Create the case in:
+
+DRAFT
+
+You may create placeholder document records only if useful for testing, but do not fabricate AI extraction results.
+
+---
+
+# 16. SECURITY
+
+Implement basic security from the beginning.
+
+Requirements:
+
+* authenticated API access
+* backend authorization
+* input validation
+* file type validation
+* file size validation
+* no secrets in frontend code
+* environment variables for credentials
+* private document access
+
+Never expose API keys in React/Vite frontend code.
+
+---
+
+# 17. ERROR HANDLING
+
+Implement useful errors.
+
+Examples:
+
+Invalid login
+
+Unauthorized request
+
+Invalid file type
+
+File too large
+
+Case not found
+
+Document not found
+
+Database error
+
+Return clean JSON error responses.
+
+Do not expose stack traces to normal users.
+
+Log useful server-side errors.
+
+---
+
+# 18. WHAT NOT TO BUILD NOW
+
+Do NOT implement:
+
+* Gemini
+* OCR
+* AI extraction
+* field confidence
+* validation engine
+* cross-document reconciliation
+* legacy comparison
+* integrity score
+* ownership history
+* audit timeline
+* realtime processing
+* scanning animation
+* final verification
+* external government database integration
+
+These belong to later phases.
+
+---
+
+# 19. PHASE 1 ACCEPTANCE TEST
+
+Before finishing, verify all of the following:
+
+1. Application starts successfully.
+2. User can register/login.
+3. Authenticated user reaches dashboard.
+4. Dashboard loads real database values.
+5. User can create a case.
+6. Case receives an ID such as LA-2026-00001.
+7. Case is persisted in PostgreSQL.
+8. User can open the case.
+9. User can upload PDF/JPG/JPEG/PNG files.
+10. Multiple files receive serial numbers in upload order.
+11. Documents are persisted.
+12. Document metadata is visible.
+13. Invalid file types are rejected.
+14. Unauthorized API requests are rejected.
+15. Refreshing the browser does not lose database data.
+16. No fake processing animation is shown.
+17. No hard-coded dashboard statistics are used.
+
+---
+
+# 20. CRITICAL REPLIT INSTRUCTION
+
+Do not rewrite the application unnecessarily.
+
+Do not install large unnecessary dependencies.
+
+Do not introduce microservices.
+
+Do not create duplicate architectures.
+
+Do not generate unused code.
+
+Do not implement future phases prematurely.
+
+Keep this phase small, stable, and testable.
+
+At the end:
+
+1. Run the application.
+2. Test the major flows.
+3. Fix build/runtime errors.
+4. Confirm database migrations work.
+5. Confirm authentication works.
+6. Confirm document upload works.
+7. Only then stop.
+
+After completing Phase 1, report:
+
+* files created/changed
+* database tables created
+* API endpoints implemented
+* environment variables required
+* tests performed
+* known limitations
+
+Do NOT start Phase 2 automatically.

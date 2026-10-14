@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap');
+@layer theme, base, clerk, components, utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
+  --font-mono: var(--app-font-mono);
+  --radius-md: var(--radius);
+}
+
+:root {
+  --background: 43 31% 96%;
+  --foreground: 183 36% 15%;
+  --border: 40 19% 84%;
+  --input: 40 19% 78%;
+  --ring: 166 46% 33%;
+  --card: 42 34% 99%;
+  --card-foreground: 183 36% 15%;
+  --card-border: 40 19% 86%;
+  --popover: 42 34% 99%;
+  --popover-foreground: 183 36% 15%;
+  --primary: 166 46% 31%;
+  --primary-foreground: 43 31% 96%;
+  --secondary: 39 29% 91%;
+  --secondary-foreground: 183 36% 20%;
+  --muted: 41 24% 91%;
+  --muted-foreground: 183 13% 43%;
+  --accent: 31 73% 57%;
+  --accent-foreground: 183 36% 15%;
+  --destructive: 3 62% 48%;
+  --destructive-foreground: 43 31% 96%;
+  --sidebar: 183 38% 17%;
+  --sidebar-foreground: 42 30% 91%;
+  --sidebar-border: 183 25% 26%;
+  --sidebar-primary: 36 75% 63%;
+  --sidebar-primary-foreground: 183 38% 17%;
+  --sidebar-accent: 183 30% 24%;
+  --sidebar-accent-foreground: 42 30% 96%;
+  --sidebar-ring: 36 75% 63%;
+  --chart-1: 166 46% 31%;
+  --chart-2: 31 73% 57%;
+  --chart-3: 183 36% 15%;
+  --chart-4: 39 29% 70%;
+  --chart-5: 3 62% 48%;
+  --app-font-sans: 'DM Sans', sans-serif;
+  --app-font-serif: 'Newsreader', serif;
+  --app-font-mono: 'DM Mono', monospace;
+  --radius: 0.65rem;
+  --shadow-sm: 0 2px 8px hsl(183 36% 15% / 0.06);
+  --shadow-md: 0 12px 30px hsl(183 36% 15% / 0.09);
+}
+
+.dark {
+  --background: 183 38% 12%;
+  --foreground: 42 30% 93%;
+  --border: 183 25% 26%;
+  --input: 183 25% 30%;
+  --ring: 36 75% 63%;
+  --card: 183 34% 16%;
+  --card-foreground: 42 30% 93%;
+  --card-border: 183 25% 25%;
+  --popover: 183 34% 16%;
+  --popover-foreground: 42 30% 93%;
+  --primary: 36 75% 63%;
+  --primary-foreground: 183 38% 17%;
+  --secondary: 183 30% 24%;
+  --secondary-foreground: 42 30% 93%;
+  --muted: 183 30% 22%;
+  --muted-foreground: 42 15% 68%;
+  --accent: 166 46% 42%;
+  --accent-foreground: 42 30% 93%;
+  --destructive: 3 62% 58%;
+  --destructive-foreground: 183 38% 12%;
+  --sidebar: 183 41% 9%;
+  --sidebar-foreground: 42 30% 93%;
+  --sidebar-border: 183 25% 19%;
+  --sidebar-primary: 36 75% 63%;
+  --sidebar-primary-foreground: 183 38% 12%;
+  --sidebar-accent: 183 30% 17%;
+  --sidebar-accent-foreground: 42 30% 93%;
+  --sidebar-ring: 36 75% 63%;
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply font-sans antialiased bg-background text-foreground; }
+}
+
+* { box-sizing: border-box; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+.mono { font-family: var(--app-font-mono); }
+.display { font-family: var(--app-font-serif); }
+
+@keyframes scanLaserVertical {
+  0% { top: 0%; opacity: 0.85; }
+  50% { top: 96%; opacity: 1; }
+  100% { top: 0%; opacity: 0.85; }
+}
+
+@keyframes scanLaserHorizontal {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-scan-vertical {
+  animation: scanLaserVertical 3s ease-in-out infinite;
+}
+
+.animate-scan-horizontal {
+  animation: scanLaserHorizontal 2s linear infinite;
+}
+
+@keyframes floatGentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(0.5deg); }
+}
+
+@keyframes floatPhone {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(-1deg); }
+}
+
+.animate-float-deed {
+  animation: floatGentle 7s ease-in-out infinite;
+}
+
+.animate-float-phone {
+  animation: floatPhone 5.5s ease-in-out infinite;
+}
+
+.noise::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .035;
+  z-index: 50;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+}
+.page-enter { animation: page-in .45s ease-out both; }
+@keyframes page-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.skeleton { background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--card)) 50%, hsl(var(--muted)) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.sidebar-link { transition: background-color .2s ease, color .2s ease, transform .2s ease; }
+.sidebar-link:hover { transform: translateX(2px); }
+.data-row { transition: background-color .15s ease; }
+.data-row:hover { background: hsl(var(--secondary) / .55); }
+.focus-ring:focus-visible { outline: 2px solid hsl(var(--accent)); outline-offset: 3px; }
+@media (max-width: 767px) { .desktop-only { display: none !important; } }

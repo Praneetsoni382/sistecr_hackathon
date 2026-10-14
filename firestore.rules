@@ -1,0 +1,132 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // =========================================================================
+    // Authentication & Development Mode Guards
+    // =========================================================================
+    // TOGGLE FOR PRODUCTION: Change `isDevelopmentMode()` to `false` when enabling
+    // live Firebase Authentication enforcement in production.
+    function isDevelopmentMode() {
+      return true;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAuthorizedOfficer() {
+      return isSignedIn() || isDevelopmentMode();
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128;
+    }
+
+    // =========================================================================
+    // 1. Profiles
+    // =========================================================================
+    match /profiles/{userId} {
+      allow read: if isAuthorizedOfficer();
+      allow write: if isAuthorizedOfficer() && isValidId(userId);
+    }
+
+    // =========================================================================
+    // 2. Cases
+    // =========================================================================
+    match /cases/{caseId} {
+      allow read: if isAuthorizedOfficer();
+      allow create, update: if isAuthorizedOfficer() && isValidId(caseId);
+      allow delete: if isAuthorizedOfficer() && isValidId(caseId);
+    }
+
+    // =========================================================================
+    // 3. Documents
+    // =========================================================================
+    match /documents/{documentId} {
+      allow read: if isAuthorizedOfficer();
+      allow create, update, delete: if isAuthorizedOfficer() && isValidId(documentId);
+    }
+
+    // =========================================================================
+    // 4. Document Extractions (Gemini Output)
+    // =========================================================================
+    match /document_extractions/{extractionId} {
+      allow read: if isAuthorizedOfficer();
+      allow create, update: if isAuthorizedOfficer() && isValidId(extractionId);
+      allow delete: if isAuthorizedOfficer() && isValidId(extractionId);
+    }
+
+    // =========================================================================
+    // 5. Extracted Fields
+    // =========================================================================
+    match /extracted_fields/{fieldId} {
+      allow read: if isAuthorizedOfficer();
+      allow create, update: if isAuthorizedOfficer() && isValidId(fieldId);
+      allow delete: if isAuthorizedOfficer() && isValidId(fieldId);
+    }
+
+    // =========================================================================
+    // 6. Legacy Land Records
+    // =========================================================================
+    match /legacy_land_records/{recordId} {
+      allow read: if isAuthorizedOfficer();
+      allow create, update, delete: if isAuthorizedOfficer() && isValidId(recordId);
+    }
+
+    // =========================================================================
+    // 7. Verification Runs
+    // =========================================================================
+    match /verification_runs/{runId} {
+      allow read: if isAuthorizedOfficer();
+      allow create, update, delete: if isAuthorizedOfficer() && isValidId(runId);
+    }
+
+    // =========================================================================
+    // 8. Verification Field Results
+    // =========================================================================
+    match /verification_field_results/{resultId} {
+      allow read: if isAuthorizedOfficer();
+      allow create, update, delete: if isAuthorizedOfficer() && isValidId(resultId);
+    }
+
+    // =========================================================================
+    // 9. Ownership History
+    // =========================================================================
+    match /ownership_history/{historyId} {
+      allow read: if isAuthorizedOfficer();
+      allow create, update, delete: if isAuthorizedOfficer() && isValidId(historyId);
+    }
+
+    // =========================================================================
+    // 10. Verified Land Records
+    // =========================================================================
+    match /verified_land_records/{recordId} {
+      allow read: if isAuthorizedOfficer();
+      allow create, update, delete: if isAuthorizedOfficer() && isValidId(recordId);
+    }
+
+    // =========================================================================
+    // 11. Audit Logs (Immutable after creation)
+    // =========================================================================
+    match /audit_logs/{auditId} {
+      allow read: if isAuthorizedOfficer();
+      allow create: if isAuthorizedOfficer() && isValidId(auditId);
+      // Audit logs are strictly immutable: no update or delete allowed
+      allow update, delete: if false;
+    }
+
+    // =========================================================================
+    // 12. Processing Steps
+    // =========================================================================
+    match /processing_steps/{stepId} {
+      allow read: if isAuthorizedOfficer();
+      allow create, update, delete: if isAuthorizedOfficer() && isValidId(stepId);
+    }
+  }
+}

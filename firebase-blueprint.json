@@ -1,0 +1,290 @@
+{
+  "entities": {
+    "Profile": {
+      "title": "Profile",
+      "description": "Officer user profile in the Land Record Intelligence System",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string" },
+        "fullName": { "type": "string" },
+        "role": { "type": "string" },
+        "department": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "isDevelopmentUser": { "type": "boolean" }
+      },
+      "required": ["id", "email", "fullName", "role"]
+    },
+    "Case": {
+      "title": "Case",
+      "description": "Land acquisition intake case record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseNumber": { "type": "string" },
+        "projectName": { "type": "string" },
+        "district": { "type": "string" },
+        "village": { "type": "string" },
+        "description": { "type": "string" },
+        "acquisitionReference": { "type": "string" },
+        "status": { "type": "string", "enum": ["DRAFT", "PROCESSING", "READY_FOR_VERIFICATION", "VERIFIED", "MANUAL_REVIEW", "INCONSISTENT"] },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "isDemo": { "type": "boolean" }
+      },
+      "required": ["id", "caseNumber", "projectName", "district", "village", "status", "createdBy"]
+    },
+    "Document": {
+      "title": "Document",
+      "description": "Source land record document uploaded to a case",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseId": { "type": "string" },
+        "documentType": { "type": "string", "enum": ["SALE_DEED", "KHASRA_RECORD", "MUTATION_RECORD", "OWNERSHIP_CERTIFICATE", "REGISTRATION_RECORD", "UNKNOWN"] },
+        "fileName": { "type": "string" },
+        "storagePath": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "fileSize": { "type": "number" },
+        "mimeType": { "type": "string" },
+        "serialNumber": { "type": "number" },
+        "status": { "type": "string", "enum": ["UPLOADED", "PROCESSING", "COMPLETED", "FAILED"] },
+        "uploadedBy": { "type": "string" },
+        "uploadedAt": { "type": "string", "format": "date-time" },
+        "processedAt": { "type": "string", "format": "date-time" },
+        "errorMessage": { "type": "string" },
+        "isDemo": { "type": "boolean" }
+      },
+      "required": ["id", "caseId", "documentType", "fileName", "storagePath", "status", "uploadedBy"]
+    },
+    "DocumentExtraction": {
+      "title": "DocumentExtraction",
+      "description": "Structured AI extraction output from Gemini model for a document",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "documentId": { "type": "string" },
+        "caseId": { "type": "string" },
+        "documentType": { "type": "string" },
+        "rawExtraction": { "type": "object" },
+        "overallConfidence": { "type": "number" },
+        "model": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "documentId", "caseId", "documentType"]
+    },
+    "ExtractedField": {
+      "title": "ExtractedField",
+      "description": "Discrete normalized field extracted from a land record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "documentId": { "type": "string" },
+        "caseId": { "type": "string" },
+        "fieldName": { "type": "string" },
+        "extractedValue": { "type": "string" },
+        "normalizedValue": { "type": "string" },
+        "confidence": { "type": "number" },
+        "sourceText": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "documentId", "caseId", "fieldName"]
+    },
+    "LegacyLandRecord": {
+      "title": "LegacyLandRecord",
+      "description": "Baseline governmental legacy land registry record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseId": { "type": "string" },
+        "ownerName": { "type": "string" },
+        "surveyNumber": { "type": "string" },
+        "khasraNumber": { "type": "string" },
+        "village": { "type": "string" },
+        "district": { "type": "string" },
+        "area": { "type": "string" },
+        "areaUnit": { "type": "string" },
+        "registrationNumber": { "type": "string" },
+        "mutationNumber": { "type": "string" },
+        "source": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "isDemo": { "type": "boolean" }
+      },
+      "required": ["id", "caseId", "ownerName", "village", "district"]
+    },
+    "VerificationRun": {
+      "title": "VerificationRun",
+      "description": "Verification execution record assessing consistency across documents and legacy register",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseId": { "type": "string" },
+        "status": { "type": "string" },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "initiatedBy": { "type": "string" },
+        "fieldValidationScore": { "type": "number" },
+        "documentConsistencyScore": { "type": "number" },
+        "extractedDataMatchScore": { "type": "number" },
+        "legacyMatchScore": { "type": "number" },
+        "integrityScore": { "type": "number" },
+        "summary": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "caseId", "status", "integrityScore"]
+    },
+    "VerificationFieldResult": {
+      "title": "VerificationFieldResult",
+      "description": "Field-level comparison result from verification analysis",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "runId": { "type": "string" },
+        "caseId": { "type": "string" },
+        "fieldName": { "type": "string" },
+        "status": { "type": "string", "enum": ["MATCH", "MISMATCH", "MISSING", "REVIEW_REQUIRED"] },
+        "expectedValue": { "type": "string" },
+        "actualValue": { "type": "string" },
+        "explanation": { "type": "string" },
+        "severity": { "type": "string", "enum": ["LOW", "MEDIUM", "HIGH", "INFO"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "runId", "caseId", "fieldName", "status"]
+    },
+    "OwnershipHistory": {
+      "title": "OwnershipHistory",
+      "description": "Chronological title transaction chain link",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseId": { "type": "string" },
+        "ownerName": { "type": "string" },
+        "previousOwnerName": { "type": "string" },
+        "transactionType": { "type": "string" },
+        "transactionDate": { "type": "string" },
+        "registrationNumber": { "type": "string" },
+        "mutationNumber": { "type": "string" },
+        "sourceDocumentId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "caseId", "ownerName"]
+    },
+    "VerifiedLandRecord": {
+      "title": "VerifiedLandRecord",
+      "description": "Officer-verified synthesized land record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseId": { "type": "string" },
+        "landRecordId": { "type": "string" },
+        "ownerName": { "type": "string" },
+        "surveyNumber": { "type": "string" },
+        "khasraNumber": { "type": "string" },
+        "village": { "type": "string" },
+        "district": { "type": "string" },
+        "area": { "type": "string" },
+        "areaUnit": { "type": "string" },
+        "registrationNumber": { "type": "string" },
+        "registrationDate": { "type": "string" },
+        "mutationNumber": { "type": "string" },
+        "mutationDate": { "type": "string" },
+        "verificationStatus": { "type": "string" },
+        "integrityScore": { "type": "number" },
+        "verifiedBy": { "type": "string" },
+        "verifiedAt": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "isDemo": { "type": "boolean" }
+      },
+      "required": ["id", "caseId", "ownerName", "village", "district", "verificationStatus"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable compliance and activity audit event",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseId": { "type": "string" },
+        "documentId": { "type": "string" },
+        "userId": { "type": "string" },
+        "action": { "type": "string" },
+        "description": { "type": "string" },
+        "metadata": { "type": "object" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "action", "description"]
+    },
+    "ProcessingStep": {
+      "title": "ProcessingStep",
+      "description": "Real-time AI pipeline execution step for a document",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseId": { "type": "string" },
+        "documentId": { "type": "string" },
+        "step": { "type": "string", "enum": ["INGESTION", "DOCUMENT_UNDERSTANDING", "CLASSIFICATION", "EXTRACTION", "COMPLETED"] },
+        "status": { "type": "string", "enum": ["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED"] },
+        "message": { "type": "string" },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "errorMessage": { "type": "string" },
+        "metadata": { "type": "object" }
+      },
+      "required": ["id", "caseId", "documentId", "step", "status"]
+    }
+  },
+  "firestore": {
+    "/profiles/{userId}": {
+      "schema": "Profile",
+      "description": "Collection of authorized officer profiles"
+    },
+    "/cases/{caseId}": {
+      "schema": "Case",
+      "description": "Collection of land acquisition case files"
+    },
+    "/documents/{documentId}": {
+      "schema": "Document",
+      "description": "Collection of uploaded source documents linked to cases"
+    },
+    "/document_extractions/{extractionId}": {
+      "schema": "DocumentExtraction",
+      "description": "Gemini structured extraction payloads"
+    },
+    "/extracted_fields/{fieldId}": {
+      "schema": "ExtractedField",
+      "description": "Normalized fields extracted across source documents"
+    },
+    "/legacy_land_records/{recordId}": {
+      "schema": "LegacyLandRecord",
+      "description": "Baseline governmental legacy land registry records"
+    },
+    "/verification_runs/{runId}": {
+      "schema": "VerificationRun",
+      "description": "Automated verification execution results"
+    },
+    "/verification_field_results/{resultId}": {
+      "schema": "VerificationFieldResult",
+      "description": "Discrepancy and field matching results"
+    },
+    "/ownership_history/{historyId}": {
+      "schema": "OwnershipHistory",
+      "description": "Historical deed chain records"
+    },
+    "/verified_land_records/{recordId}": {
+      "schema": "VerifiedLandRecord",
+      "description": "Synthesized records verified by authorized officers"
+    },
+    "/audit_logs/{auditId}": {
+      "schema": "AuditLog",
+      "description": "Immutable compliance and operational audit trails"
+    },
+    "/processing_steps/{stepId}": {
+      "schema": "ProcessingStep",
+      "description": "Document ingestion and AI processing stage checkpoints"
+    }
+  }
+}

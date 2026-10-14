@@ -1,0 +1,6 @@
+{
+  "name": "Land Record Intelligence System",
+  "description": "Vision Vault officer workspace for creating land acquisition cases, managing records, and processing land documents.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

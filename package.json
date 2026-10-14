@@ -1,0 +1,58 @@
+{
+  "name": "workspace",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "artifacts/*",
+    "lib/*",
+    "scripts"
+  ],
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "npx vite build --config artifacts/land-record-intelligence/vite.config.ts && mkdir -p dist && cp -r artifacts/land-record-intelligence/dist/public/* dist/ && npx esbuild server.ts --bundle --platform=node --format=cjs --sourcemap --outfile=dist/server.cjs --external:vite",
+    "start": "node dist/server.cjs",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clerk/express": "^2.1.68",
+    "@clerk/shared": "^4.32.0",
+    "@google-cloud/storage": "^8.1.0",
+    "@google/genai": "^2.23.0",
+    "@tailwindcss/vite": "^4.1.14",
+    "@vitejs/plugin-react": "^5.0.4",
+    "@xmldom/xmldom": "^0.9.12",
+    "adm-zip": "^0.6.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "drizzle-orm": "^0.45.2",
+    "esbuild": "0.28.2",
+    "express": "^5.2.1",
+    "fast-xml-parser": "^5.11.2",
+    "firebase": "^12.19.0",
+    "google-auth-library": "^11.0.2",
+    "http-proxy-middleware": "^4.2.0",
+    "jspdf": "^4.2.1",
+    "pdfjs-dist": "^6.3.289",
+    "pino": "^9.14.0",
+    "pino-http": "^10.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.2",
+    "xml-crypto": "^6.3.2",
+    "xpath": "^0.0.34"
+  },
+  "devDependencies": {
+    "@firebase/eslint-plugin-security-rules": "^0.0.2",
+    "@types/adm-zip": "^0.5.8",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.3.3",
+    "@vercel/node": "^5.1.8"
+  },
+  "overrides": {
+    "esbuild": "0.28.2"
+  }
+}

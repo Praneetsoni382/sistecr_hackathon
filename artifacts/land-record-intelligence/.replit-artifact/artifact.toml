@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Land Record Intelligence System"
+description = "A secure officer workspace for creating land acquisition cases, organizing source documents, and preparing records for later verification."
+version = "1.0.0"
+id = "artifacts/land-record-intelligence"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25722
+
+[services.development]
+run = "pnpm --filter @workspace/land-record-intelligence run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/land-record-intelligence", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/land-record-intelligence/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25722"
+BASE_PATH = "/"

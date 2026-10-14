@@ -1,0 +1,31 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    // TOGGLE FOR PRODUCTION: Change `isDevelopmentMode()` to `false` when enabling
+    // live Firebase Authentication enforcement in production.
+    function isDevelopmentMode() {
+      return true;
+    }
+
+    function isAuthorizedOfficer() {
+      return request.auth != null || isDevelopmentMode();
+    }
+
+    // Land Record private source documents
+    // Structure: cases/{caseId}/{documentId}/{fileName}
+    match /cases/{caseId}/{documentId}/{fileName} {
+      allow read: if isAuthorizedOfficer();
+      allow write: if isAuthorizedOfficer()
+                   && request.resource.size < 50 * 1024 * 1024 // 50MB max
+                   && (request.resource.contentType.matches('application/pdf')
+                       || request.resource.contentType.matches('image/.*'));
+      allow delete: if isAuthorizedOfficer();
+    }
+  }
+}
